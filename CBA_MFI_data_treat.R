@@ -32,6 +32,7 @@ if (!is.null(chosen_file_gate)) {
 } else {
   print("没有选择文件")
 }
+gate <- read.csv(chosen_file_gate,header = T)
 print('选择标准品定值文件')
 
 chosen_file_standard <- file.choose()
@@ -41,10 +42,10 @@ if (!is.null(chosen_file_standard)) {
 } else {
   print("没有选择文件")
 }
-gate <- read.csv(chosen_file_gate,header = T)
+standard <- read.csv(chosen_file_standard,header = T)
 
-names(MFI) <- c('sample','P3','P4','P5','P6','P7','P8','P9','P10',
-                'P11','P12','P13','P14','P15','P16')
+#names(MFI) <- c('sample','P3','P4','P5','P6','P7','P8','P9','P10',
+ #               'P11','P12','P13','P14','P15','P16')
 t_MFI <- as.data.frame(t(MFI))
 colnames(t_MFI) <- t_MFI[1,]
 t_MFI['gate'] <- colnames(MFI)
@@ -112,7 +113,10 @@ library(gridGraphics)
 plot_all <-grid.arrange(plot_IL.1b ,plot_IL.2,plot_IL.4,plot_IL.5,plot_IL.6,
                                             plot_IL.8 ,plot_IL.10,plot_IL.12p70 ,plot_IL.17A ,plot_IL.17F, 
                                             plot_IL.22,plot_TNF.a ,plot_TNF.b ,plot_IFN.g ,nrow=4,ncol=4)
-ggsave(filename = "C:/Users/meixi/Desktop/standard_curve.png",plot_all,width=14,height=12)
+
+plot_file  <- file.choose()
+ggsave(filename = plot_file,plot_all,width=14,height=12)
+#ggsave(filename = "C:/Users/meixi/Desktop/standard_curve.png",plot_all,width=14,height=12)
 # calculate every cytokine conc by standard
 
 MFI_1.1 <-as.data.frame(lapply(MFI_1[,-ncol(MFI_1)],as.numeric)) 
@@ -169,7 +173,19 @@ for (a in 1:nrow(MFI_1.2)) {
 }
 #数值型数据转换为小数点后两位
 MFI_1.2[] <- lapply(MFI_1.2, function(x) round(x, 2))
-MFI_1.2['sample'] <- row.names(MFI_1.2)
+#MFI_1.2['sample'] <- row.names(MFI_1.2)
 #df[] <- lapply(df, function(x) round(x, 2))
-write_xlsx(MFI_1.2,'C:/Users/meixi/Desktop/CBA data.xlsx')
+
+csv_file  <- file.choose()
+if (!substring(csv_file, nchar(csv_file)-3, nchar(csv_file)) %in% '.csv') {
+  csv_file <- paste0(csv_file, '.csv')
+}
+
+write.csv(MFI_1.2,csv_file,fileEncoding = "GB18030")
+
+#write_xlsx(MFI_1.2,'C:/Users/meixi/Desktop/CBA data.xlsx')
+
+
+
+
 
